@@ -1,10 +1,10 @@
 {
-  "name": "atmus-template-nestjs",
+  "name": "smartlytics-api",
   "version": "1.0.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/atmus-tecnologia/atmus-template-nestjs"
+    "url": "https://github.com/atmus-tecnologia/smartlytics-api"
   },
   "description": "",
   "license": "UNLICENSED",
