@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "pkief.material-icon-theme",
+    "dotenv.dotenv-vscode",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "mintlify.document",
+    "abhijoybasak.nestjs-files",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "esbenp.prettier-vscode",
+    "digitalbrainstem.javascript-ejs-support",
+    "quicktype.quicktype",
+    "ashinzekene.nestjs",
+    "s3gf4ult.monokai-vibrant",
+    "aaron-bond.better-comments"
+  ]
+}
