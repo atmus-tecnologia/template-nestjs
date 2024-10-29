@@ -1,3 +1,9 @@
 {
-  "path": "./node_modules/cz-conventional-changelog"
+  "path": "./node_modules/@digitalroute/cz-conventional-changelog-for-jira",
+  "jiraMode": true,
+  "jiraOptional": true,
+  "jiraLocation": "post-body",
+  "jiraPrepend": "[",
+  "jiraAppend": "]",
+  "exclamationMark": true
 }

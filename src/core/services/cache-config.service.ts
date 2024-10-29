@@ -6,7 +6,6 @@ export class CacheConfigService implements CacheOptionsFactory {
   createCacheOptions(): CacheModuleOptions {
     return {
       isGlobal: true,
-      ttl: 5,
     };
   }
 }

@@ -1,19 +1,15 @@
-import { BullModule } from '@nestjs/bull';
+import { StorageModule } from '@atmus/nestjs-storage';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import path from 'path';
-import { BullConfigService, CacheConfigService, ThrottlerConfigService, TypeOrmConfigService } from './services';
+import { CacheConfigService, ThrottlerConfigService, TypeOrmConfigService } from './services';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    BullModule.forRootAsync({
-      useClass: BullConfigService,
-    }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
@@ -23,10 +19,8 @@ import { BullConfigService, CacheConfigService, ThrottlerConfigService, TypeOrmC
     CacheModule.registerAsync({
       useClass: CacheConfigService,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: path.join('storage'),
-      renderPath: 'uploads',
-    }),
+    StorageModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class CoreModule {}

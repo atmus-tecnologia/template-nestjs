@@ -1,18 +1,15 @@
-import { MailerModule } from '@nestjs-modules/mailer';
-import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { EmailConfigService } from './email-config.service';
-import { EmailProcessor } from './email.processor';
+import { MailgunModule } from '@nextnm/nestjs-mailgun';
 import { EmailService } from './email.service';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: 'mailQueue' }),
-    MailerModule.forRootAsync({
-      useClass: EmailConfigService,
+    MailgunModule.forRoot({
+      key: process.env.MAILGUN_TOKEN,
+      username: 'api',
     }),
   ],
-  providers: [EmailService, EmailProcessor],
+  providers: [EmailService],
   exports: [EmailService],
 })
 export class EmailModule {}

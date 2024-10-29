@@ -1,18 +1,23 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { EmailService } from '../email';
 import { UsersService } from '../users';
 import { User } from '../users/entities';
+import { UserRoleEnum } from '../users/enums';
+import { WorkspacesService } from '../workspaces';
 import { ForgotPasswordDto, LoginDto, RegisterDto, ResetPassowordDto } from './dto';
 import { AccessToken, JwtPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly workspacesService: WorkspacesService
   ) {}
 
   async login({ email, password }: LoginDto, remoteAddress: string): Promise<AccessToken> {
@@ -34,7 +39,11 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const user = await this.usersService.create(registerDto);
+    const user = await this.usersService.create({
+      ...registerDto,
+      email: registerDto.email.toLowerCase(),
+      name: `${registerDto.firstName} ${registerDto.lastName}`.toUpperCase(),
+    });
 
     // Generates a random token to verify the email
     const tokenVerifyEmail = randomUUID();
@@ -46,7 +55,7 @@ export class AuthService {
     });
 
     // Sends the verification email
-    await this.emailService.sendVerifyEmail(user, tokenVerifyEmail);
+    this.emailService.sendVerifyEmail(user, tokenVerifyEmail).catch(e => this.logger.error(e));
 
     return user;
   }
@@ -79,7 +88,7 @@ export class AuthService {
         tokenType: 'reset-password',
       };
       const jwtToken = this.jwtService.sign(payload, { expiresIn: '15m' });
-      await this.emailService.sendResetPassword(user, jwtToken);
+      this.emailService.sendResetPassword(user, jwtToken).catch(e => this.logger.error(e));
     }
   }
 
@@ -92,7 +101,7 @@ export class AuthService {
     });
 
     // Enviar email de senha alterada
-    await this.emailService.sendChangedPassword(user);
+    this.emailService.sendChangedPassword(user).catch(e => this.logger.error(e));
   }
 
   async verifyEmail(token: string) {
@@ -105,7 +114,7 @@ export class AuthService {
     });
 
     // Enviar email de email verificado
-    await this.emailService.sendVerifiedEmail(finded);
+    this.emailService.sendVerifiedEmail(finded).catch(e => this.logger.error(e));
 
     return finded;
   }
@@ -120,6 +129,35 @@ export class AuthService {
       tokenType: 'verify-email',
     };
     const jwtToken = this.jwtService.sign(payload, { expiresIn: '30d' });
-    await this.emailService.sendVerifyEmail(finded, jwtToken);
+    this.emailService.sendVerifyEmail(finded, jwtToken).catch(e => this.logger.error(e));
+  }
+
+  async selectWorkspace(user: User, workspaceId: string, remoteAddress: string) {
+    const workspace = await this.workspacesService.findOneBy({ id: workspaceId });
+    if (!workspace) throw new BadRequestException('Workspace não encontrado');
+
+    // ** Sets the payload to create the JWT token
+    const payload: JwtPayload = {
+      id: user.id,
+      remoteAddress,
+      tokenType: 'user',
+      isAdmin: user.role === UserRoleEnum.ADMIN,
+      workspaceId,
+    };
+
+    user.workspace = workspace;
+
+    // ** Atualiza o último workspace selecionado pelo usuário
+    this.usersService
+      .update({
+        id: user.id,
+        lastWorkspaceId: workspaceId,
+      })
+      .catch(e => this.logger.error({ error: e }));
+
+    // ** Generate access token based on payload
+    const accessToken = this.jwtService.sign(payload);
+
+    return { accessToken, userData: user };
   }
 }

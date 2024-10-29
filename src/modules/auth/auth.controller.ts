@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Ip, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Ip, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '~/common/decorators';
-import { AuthGuard, ResetPasswordGuard, VerifyEmailGuard } from '~/common/guards';
+import { AuthGuard, ResetPasswordGuard, VerifyEmailGuard } from '~/modules/auth/guards';
 import { User } from '../users/entities';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, LoginDto, RegisterDto, ResetPassowordDto } from './dto';
@@ -15,6 +15,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard)
   me(@CurrentUser() user: User) {
+    delete user.workspaces;
     return user;
   }
 
@@ -48,5 +49,11 @@ export class AuthController {
   @Post('resend-verification-email')
   resendVerificationEmail(@Body() { email }: { email: string }) {
     return this.authService.resendVerificationEmail(email);
+  }
+
+  @Post('select-workspace')
+  @UseGuards(AuthGuard)
+  selectStore(@CurrentUser() user: User, @Ip() remoteAddress: string, @Body('workspaceId', ParseUUIDPipe) workspaceId: string) {
+    return this.authService.selectWorkspace(user, workspaceId, remoteAddress);
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilterOperator, PaginateQuery, paginate } from 'nestjs-paginate';
+import { FilterOperator, PaginateConfig, PaginateQuery, paginate } from 'nestjs-paginate';
 import { DeepPartial, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
-import { CrudContract } from '~/common/interfaces';
+import { CrudContract } from '~/common/contracts';
 import { User } from './entities';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UsersService implements CrudContract<User> {
     return this.repository.save(create);
   }
 
-  list(query: PaginateQuery, criteria?: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
+  list(query: PaginateQuery, config?: Partial<PaginateConfig<User>>) {
     return paginate(query, this.repository, {
       nullSort: 'last',
       sortableColumns: ['id', 'name', 'role'],
@@ -30,7 +30,7 @@ export class UsersService implements CrudContract<User> {
       },
       defaultLimit: 10,
       maxLimit: 100,
-      where: criteria,
+      ...config,
     });
   }
 
@@ -49,7 +49,7 @@ export class UsersService implements CrudContract<User> {
     });
   }
 
-  async findOne(id: number, relations?: FindOptionsRelations<User>, withDeleted?: boolean) {
+  async findOne(id: string, relations?: FindOptionsRelations<User>, withDeleted?: boolean) {
     return this.repository.findOne({
       relations,
       withDeleted,
@@ -73,21 +73,21 @@ export class UsersService implements CrudContract<User> {
     return this.repository.save(finded);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const finded = await this.findOne(id);
     if (!finded) throw new NotFoundException('Usuário não encontrado');
 
     return this.repository.remove(finded);
   }
 
-  async softRemove(id: number) {
+  async softRemove(id: string) {
     const finded = await this.findOne(id);
     if (!finded) throw new NotFoundException('Usuário não encontrado');
 
     return this.repository.softRemove(finded);
   }
 
-  async recover(id: number) {
+  async recover(id: string) {
     const finded = await this.findOne(id, undefined, true);
     if (!finded) throw new NotFoundException('Usuário não encontrado');
 

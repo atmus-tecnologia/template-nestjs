@@ -1,0 +1,18 @@
+# Arquivos e diretórios do sistema
+.dockerignore
+node_modules
+npm-debug.log
+*Dockerfile*
+*docker-compose*
+
+# Arquivos específicos do editor
+.vscode
+.idea
+
+# Arquivos específicos do Git
+.git
+.gitignore
+
+# Arquivos e diretórios de build
+/dist
+/coverage

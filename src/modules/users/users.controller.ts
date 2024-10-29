@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { User } from './entities';
@@ -21,28 +21,28 @@ export class UsersController {
     return this.usersService.list(query);
   }
 
-  @Patch()
-  update(@Body() updateUserDto: UpdateUserDto): Promise<User> {
+  @Patch(':id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     return this.usersService.update(updateUserDto);
   }
 
-  @Get(':id(\\d+)')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 
-  @Delete(':id(\\d+)')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.remove(id);
   }
 
-  @Delete(':id(\\d+)/soft')
-  softRemove(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  @Delete(':id/soft')
+  softRemove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.softRemove(id);
   }
 
-  @Get(':id(\\d+)/recover')
-  recover(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  @Get(':id/recover')
+  recover(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.recover(id);
   }
 }

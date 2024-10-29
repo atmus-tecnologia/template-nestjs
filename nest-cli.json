@@ -3,27 +3,6 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true,
-    "webpack": true
-  },
-  "projects": {
-    "openai": {
-      "type": "library",
-      "root": "libs/openai",
-      "entryFile": "index",
-      "sourceRoot": "libs/openai/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/openai/tsconfig.lib.json"
-      }
-    },
-    "storage": {
-      "type": "library",
-      "root": "libs/storage",
-      "entryFile": "index",
-      "sourceRoot": "libs/storage/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/storage/tsconfig.lib.json"
-      }
-    }
+    "deleteOutDir": true
   }
 }

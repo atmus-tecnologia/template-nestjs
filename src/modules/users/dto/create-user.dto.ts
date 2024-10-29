@@ -1,6 +1,4 @@
 import { IsEmail, IsNotEmpty, IsString, Length, MinLength } from 'class-validator';
-import { Exists } from '~/common/validators';
-import { User } from '../entities';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -11,7 +9,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @IsEmail()
-  @Exists(User, 'email')
   email: string;
 
   @IsNotEmpty()

@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { EmailModule } from '../email';
 import { UsersModule } from '../users';
+import { WorkspacesModule } from '../workspaces';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthStrategy, AuthWsStrategy, ResetPasswordStrategy, VerifyEmailStrategy } from './strategies';
@@ -16,6 +17,7 @@ import { AuthStrategy, AuthWsStrategy, ResetPasswordStrategy, VerifyEmailStrateg
     }),
     EmailModule,
     UsersModule,
+    WorkspacesModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthStrategy, AuthWsStrategy, ResetPasswordStrategy, VerifyEmailStrategy],
