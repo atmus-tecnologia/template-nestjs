@@ -5,8 +5,8 @@
   },
   "dotenv.enableAutocloaking": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": true
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
   },
   "eslint.validate": ["typescript"],
   "prettier.prettierPath": "./node_modules/prettier"
