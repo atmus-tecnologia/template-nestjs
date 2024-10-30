@@ -52,18 +52,16 @@ services:
       - smartlytics_network
 
   evolution-api:
-    image: atendai/evolution-api:homolog
+    image: atendai/evolution-api:latest
     command: ["node", "./dist/main.js"]
     restart: always
     environment:
       LOG_LEVEL: ERROR,WARN,DEBUG,INFO,LOG,DARK
       LOG_COLOR: true
       LOG_BAILEYS: error
+      EVENT_EMITTER_MAX_LISTENERS: 50
       AUTHENTICATION_API_KEY: YOUR_SUPER_SECURE_AUTHENTICATION_KEY
       AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: true
-      DEL_INSTANCE: 5
-      DEL_TEMP_INSTANCES: true
-      DATABASE_ENABLED: true
       DATABASE_PROVIDER: postgresql
       DATABASE_CONNECTION_URI: postgresql://postgres:yourpassword@postgres:5432/evolution_db?schema=public
       DATABASE_CONNECTION_CLIENT_NAME: evolution_docker
@@ -74,12 +72,18 @@ services:
       DATABASE_SAVE_DATA_CHATS: true
       DATABASE_SAVE_DATA_LABELS: true
       DATABASE_SAVE_DATA_HISTORIC: true
+      DATABASE_SAVE_IS_ON_WHATSAPP: true
+      DATABASE_SAVE_IS_ON_WHATSAPP_DAYS: 7
       CONFIG_SESSION_PHONE_CLIENT: ${APP_NAME}
-      CONFIG_SESSION_PHONE_NAME: Edge
+      CONFIG_SESSION_PHONE_NAME: Chrome
+      CONFIG_SESSION_PHONE_VERSION: 2.3000.1015901307
       QRCODE_LIMIT: 30
       CACHE_REDIS_ENABLED: true
       CACHE_REDIS_URI: redis://redis:6379
+      CACHE_REDIS_TTL: 604800
       CACHE_REDIS_PREFIX_KEY: evolution
+      CACHE_REDIS_SAVE_INSTANCES: false
+      CACHE_LOCAL_ENABLED: true
     ports:
       - '8080:8080'
     networks:
