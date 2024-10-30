@@ -1,8 +1,8 @@
 {
-  "name": "smartlytics-api",
+  "name": "atmus-template-nestjs",
   "version": "1.0.0",
   "private": true,
-  "description": "Api da Smartlytics",
+  "description": "A template for NestJS projects",
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
